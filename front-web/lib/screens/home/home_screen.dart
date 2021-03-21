@@ -12,11 +12,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context);
-
     void load() async {
-      print(kIsWeb);
-
       var dio = Dio();
       dio.options
         ..baseUrl = 'https://primeback.herokuapp.com/'
@@ -40,15 +36,10 @@ class HomeScreen extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: kIsWeb
-                    ? [
-                        Colors.orange,
-                        Colors.red,
-                      ]
-                    : [
-                        Colors.greenAccent,
-                        Colors.lightGreenAccent,
-                      ],
+                colors: [
+                  Colors.greenAccent,
+                  Colors.lightGreenAccent,
+                ],
               ),
             ),
           ),

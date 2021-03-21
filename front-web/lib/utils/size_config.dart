@@ -6,12 +6,15 @@ class SizeConfig {
   static double screenHeight;
   static double defaultSize;
   static Orientation orientation;
+  static bool started = false;
 
   void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    orientation = _mediaQueryData.orientation;
+    if (!started) {
+      _mediaQueryData = MediaQuery.of(context);
+      screenWidth = _mediaQueryData.size.width;
+      screenHeight = _mediaQueryData.size.height;
+      orientation = _mediaQueryData.orientation;
+    }
   }
 
   static double getProportionateScreenHeight(double input) {
