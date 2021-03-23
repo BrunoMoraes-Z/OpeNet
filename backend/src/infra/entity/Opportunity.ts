@@ -7,6 +7,9 @@ export default class Opportunity {
   @PrimaryGeneratedColumn('uuid')
   opportunity_id: string;
 
+  @Column()
+  auhor_id: string
+
   @ManyToOne(() => User)
   @JoinColumn({name: 'user_id'})
   author: User;

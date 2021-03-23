@@ -4,16 +4,14 @@
    "port": 5432,
    "username": "postgres",
    "password": "docker",
-   "database": "opet_imp_sis",
-   "synchronize": true,
-   "logging": false,
+   "database": "postgres",
    "entities": [
-      "./src/entity/**/*.ts"
+      "./src/infra/entity/*.ts"
    ],
    "migrations": [
-      "./src/database/migrations/*.ts"
+      "./src/infra/database/migrations/*.ts"
    ],
    "cli": {
-      "migrationsDir": "./src/database/migrations"
+      "migrationsDir": "./src/infra/database/migrations"
    }
 }

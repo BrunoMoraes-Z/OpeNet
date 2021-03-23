@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import Question from "./Question";
 import User from "./User";
 
@@ -8,11 +8,17 @@ export default class Answer {
   @PrimaryGeneratedColumn('uuid')
   answer_id: string;
 
+  @Column()
+  author_id: string;
+
   @ManyToOne(() => User)
   @JoinColumn({name: 'user_id'})
   author: User;
 
-  @ManyToOne(() => Question)
+  @Column()
+  question_id: string;
+
+  @OneToOne(() => Question)
   @JoinColumn({name: 'question_id'})
   question: Question;
 
