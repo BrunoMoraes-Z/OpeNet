@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:openet/utils/size_config.dart';
@@ -13,18 +12,18 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void load() async {
-      var dio = Dio();
-      dio.options
-        ..baseUrl = 'https://primeback.herokuapp.com/'
-        ..headers = {
-          'Referer': dio.options.baseUrl,
-          HttpHeaders.userAgentHeader: 'dio',
-          // 'User-Agent':
-          // 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36 Edg/89.0.774.57'
-        };
+      // var dio = Dio();
+      // dio.options
+      //   ..baseUrl = 'https://primeback.herokuapp.com/'
+      //   ..headers = {
+      //     'Referer': dio.options.baseUrl,
+      //     HttpHeaders.userAgentHeader: 'dio',
+      //     // 'User-Agent':
+      //     // 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36 Edg/89.0.774.57'
+      //   };
 
-      var response = await dio.get('/cep');
-      print(response.data);
+      // var response = await dio.get('/cep');
+      // print(response.data);
     }
 
     return Scaffold(

@@ -36,11 +36,10 @@ class SplashScreen extends StatelessWidget {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
                     padding: EdgeInsets.all(0),
-                    child: SvgPicture.asset('/logo_mobile.svg'),
+                    child: SvgPicture.asset('assets/logo_mobile.svg'),
                   ),
                   Text(
                     'OpeNet',
@@ -51,7 +50,33 @@ class SplashScreen extends StatelessWidget {
                       fontFamily: 'Roboto',
                     ),
                   ),
-                  Spacer()
+                  Spacer(
+                    flex: 2,
+                  ),
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                        color: Color(0xff2a2a2a),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(50),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.30),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: Offset(0, 3),
+                          )
+                        ]),
+                    child: IconButton(
+                      color: Color(0xfff0f0f5),
+                      icon: Icon(Icons.arrow_forward_outlined),
+                      iconSize: 30,
+                      onPressed: () => print('Click'),
+                    ),
+                  ),
+                  Spacer(),
                 ],
               ),
             )

@@ -1,14 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:openet/screens/login/login_screen.dart';
+import 'package:openet/screens/login/web/body.dart';
 import 'package:openet/screens/splash/splash_screen.dart';
+import 'package:openet/utils/loading.dart';
 import 'package:openet/utils/routes.dart';
 
 void main() async {
   await GetStorage.init('local');
   runApp(MyApp());
+  Loading().configLoading();
 }
 
 class MyApp extends StatelessWidget {
@@ -23,6 +27,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: kIsWeb ? LoginScreen.routeName : SplashScreen.routeName,
       routes: routes,
+      builder: EasyLoading.init(),
     );
   }
 }
