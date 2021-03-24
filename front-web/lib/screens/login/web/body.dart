@@ -72,43 +72,50 @@ class _LoginFormState extends State<LoginForm> {
 
   void makeSession(String emailv, String passwordv) async {
     var uri = Uri.parse('http://127.0.0.1:3333/sessions');
-    await http
-        .post(
-      uri,
-      headers: {'Content-Type': 'application/json; charset=utf-8'},
-      body: utf8.encode(
-        json.encode({
-          'email': emailv,
-          'password': passwordv,
-        }),
-      ),
-    )
-        .then(
-      (response) {
-        var body = json.decode(response.body);
-        if (response.statusCode == 200) {
-          var st = GetStorage('local');
-          st.write('token', body['token']);
-          st.write('user', body['user']);
-          setState(() {
-            Navigator.pushNamed(
-              context,
-              HomeScreen.routeName,
+    try {
+      await http
+          .post(
+        uri,
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+        body: utf8.encode(
+          json.encode({
+            'email': emailv,
+            'password': passwordv,
+          }),
+        ),
+      )
+          .then(
+        (response) {
+          var body = json.decode(response.body);
+          if (response.statusCode == 200) {
+            var st = GetStorage('local');
+            st.write('token', body['token']);
+            st.write('user', body['user']);
+            setState(() {
+              Navigator.pushNamed(
+                context,
+                HomeScreen.routeName,
+              );
+            });
+            EasyLoading.dismiss();
+            EasyLoading.showSuccess(
+              'Login Efetuado',
+              duration: Duration(seconds: 2),
             );
-          });
-          EasyLoading.dismiss();
-          EasyLoading.showSuccess(
-            'Login Efetuado',
-            duration: Duration(seconds: 2),
-          );
-        } else {
-          EasyLoading.showError(
-            body['message'],
-            duration: Duration(seconds: 3),
-          );
-        }
-      },
-    );
+          } else {
+            EasyLoading.showError(
+              body['message'],
+              duration: Duration(seconds: 3),
+            );
+          }
+        },
+      );
+    } catch (_) {
+      EasyLoading.showError(
+        'Ouve um Erro ao tentar efetuar o login.',
+        duration: Duration(seconds: 5),
+      );
+    }
     // EasyLoading.show();
   }
 
