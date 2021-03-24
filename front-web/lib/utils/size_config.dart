@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class SizeConfig {
@@ -19,11 +20,13 @@ class SizeConfig {
 
   static double getProportionateScreenHeight(double input) {
     double height = SizeConfig.screenHeight;
-    return (input / 812) * height;
+    return (height * (input / 100));
+    // return (input / (kIsWeb ? 1280 : 812)) * height;
   }
 
   static double getProportionateScreenWidth(double input) {
     double width = SizeConfig.screenWidth;
-    return (input / 375) * width;
+    return (width * (input / 100));
+    // return (input / (kIsWeb ? 800 : 375)) * width;
   }
 }

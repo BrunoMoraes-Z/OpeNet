@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:openet/screens/home/home_screen.dart';
 import 'package:openet/utils/size_config.dart';
 
 class BodyWeb extends StatelessWidget {
@@ -68,21 +70,46 @@ class _LoginFormState extends State<LoginForm> {
   bool _passwordVisible = false;
   String email = '', password = '';
 
-  void makeSession(String email, String password) async {
-    if (email.trim().length > 0 && password.trim().length > 0) {
-      var uri = Uri.parse('http://127.0.0.1:3333/sessions');
-      var response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json; charset=utf-8'},
-        body: utf8.encode(
-          json.encode({
-            'email': email,
-            'password': password,
-          }),
-        ),
-      );
-      print(response.body);
-    }
+  void makeSession(String emailv, String passwordv) async {
+    var uri = Uri.parse('http://127.0.0.1:3333/sessions');
+    await http
+        .post(
+      uri,
+      headers: {'Content-Type': 'application/json; charset=utf-8'},
+      body: utf8.encode(
+        json.encode({
+          'email': emailv,
+          'password': passwordv,
+        }),
+      ),
+    )
+        .then(
+      (response) {
+        var body = json.decode(response.body);
+        if (response.statusCode == 200) {
+          var st = GetStorage('local');
+          st.write('token', body['token']);
+          st.write('user', body['user']);
+          setState(() {
+            Navigator.pushNamed(
+              context,
+              HomeScreen.routeName,
+            );
+          });
+          EasyLoading.dismiss();
+          EasyLoading.showSuccess(
+            'Login Efetuado',
+            duration: Duration(seconds: 2),
+          );
+        } else {
+          EasyLoading.showError(
+            body['message'],
+            duration: Duration(seconds: 3),
+          );
+        }
+      },
+    );
+    // EasyLoading.show();
   }
 
   @override
@@ -120,6 +147,9 @@ class _LoginFormState extends State<LoginForm> {
               if (value.isEmpty || !emailValidatorRegExp.hasMatch(value)) {
                 return 'Informe um Email válido.';
               } else {
+                if (kIsWeb) {
+                  email = value;
+                }
                 return null;
               }
             },
@@ -158,6 +188,9 @@ class _LoginFormState extends State<LoginForm> {
         if (value.isEmpty || value.length < 6) {
           return 'Informe uma senha válida.';
         }
+        if (kIsWeb) {
+          password = value;
+        }
         return null;
       },
       decoration: InputDecoration(
@@ -183,7 +216,7 @@ class _LoginFormState extends State<LoginForm> {
     return GestureDetector(
       onTap: () {
         if (_formKey.currentState.validate()) {
-          print('VALIDO');
+          makeSession(email, password);
         }
       },
       child: Container(
