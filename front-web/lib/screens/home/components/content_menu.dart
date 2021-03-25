@@ -25,7 +25,7 @@ class BuildContentMenu extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: SizeConfig.getProportionateScreenWidth(25) - 95,
+            width: SizeConfig.getProportionateScreenWidth(25),
             height: 155,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(25),
@@ -40,7 +40,10 @@ class BuildContentMenu extends StatelessWidget {
               ],
             ),
             child: Padding(
-              padding: EdgeInsets.all(12),
+              padding: EdgeInsets.only(
+                top: 12,
+                bottom: 12,
+              ),
               child: Column(
                 children: [
                   Text(

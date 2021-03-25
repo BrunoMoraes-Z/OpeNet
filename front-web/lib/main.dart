@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:openet/screens/home/home_screen.dart';
 import 'package:openet/screens/login/login_screen.dart';
@@ -22,6 +23,16 @@ class MyApp extends StatelessWidget {
     bool hasToken = GetStorage('local').hasData('token');
     return MaterialApp(
       title: 'OpeNet',
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en'),
+        const Locale('pt', 'BR'),
+      ],
+      locale: Locale('pt', 'BR'),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
