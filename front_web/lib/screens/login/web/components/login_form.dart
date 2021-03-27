@@ -8,7 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
+import 'package:openet/components/default_button.dart';
+import 'package:openet/screens/complete_register/complete_register.dart';
 import 'package:openet/screens/home/home_screen.dart';
+import 'package:openet/screens/login/web/components/google.dart';
+import 'package:openet/screens/recover/recover_screen.dart';
 import 'package:openet/screens/registration/register_screen.dart';
 
 class LoginForm extends StatefulWidget {
@@ -54,12 +58,13 @@ class _LoginFormState extends State<LoginForm> {
             });
             EasyLoading.dismiss();
             EasyLoading.showSuccess(
-              'Login Efetuado',
+              'Login Realizado com Sucesso.',
               duration: Duration(seconds: 2),
             );
           } else {
             EasyLoading.showError(
-              body['message'],
+              'Erro de Login. Tente Novamente.',
+              // body['message'],
               duration: Duration(seconds: 3),
             );
           }
@@ -71,7 +76,6 @@ class _LoginFormState extends State<LoginForm> {
         duration: Duration(seconds: 5),
       );
     }
-    // EasyLoading.show();
   }
 
   @override
@@ -131,7 +135,36 @@ class _LoginFormState extends State<LoginForm> {
           SizedBox(
             height: 60,
           ),
-          buildLoginFormButton(),
+          DefaultButton(
+            text: 'Entrar',
+            event: () {
+              if (_formKey.currentState.validate()) {
+                makeSession(email, password);
+              }
+            },
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          DefaultButton(
+            text: 'teste',
+            event: () {
+              var st = GetStorage('local');
+              if (!st.hasData('gcomplete')) {
+                st.write('gcomplete', {
+                  'email': 'moraes.7@gmail.com',
+                  'f_name': 'Bruno',
+                  'l_name': 'Moraes'
+                });
+                print('salvo');
+              }
+              Navigator.pushNamed(context, CompleteRegister.routeName);
+            },
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          kIsWeb ? GoogleSignInButton() : Container()
         ],
       ),
     );
@@ -177,49 +210,6 @@ class _LoginFormState extends State<LoginForm> {
       ),
     );
   }
-
-  GestureDetector buildLoginFormButton() {
-    return GestureDetector(
-      onTap: () {
-        if (_formKey.currentState.validate()) {
-          makeSession(email, password);
-        }
-      },
-      child: Container(
-        height: 45,
-        width: 160,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.25),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: Offset(0, 3),
-            )
-          ],
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              Color(0xff28a745),
-              Color(0xff20c997),
-            ],
-          ),
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
-        ),
-        child: Text(
-          'Entrar',
-          style: TextStyle(
-            fontSize: 20,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
 }
 
 class BuildForgotAndRegisterComponents extends StatelessWidget {
@@ -230,23 +220,20 @@ class BuildForgotAndRegisterComponents extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        //
-        // TO DO ?
-        //
-        // GestureDetector(
-        //   onTap: () => {
-        //     print('Esqueci'),
-        //   },
-        //   child: Text(
-        //     'Esqueci Minha Senha',
-        //     style: TextStyle(
-        //       color: Colors.grey.shade700,
-        //       fontSize: 12,
-        //     ),
-        //   ),
-        // ),
+        GestureDetector(
+          onTap: () => {
+            Navigator.pushNamed(context, RecoverScreen.routeName),
+          },
+          child: Text(
+            'Recuperar Senha',
+            style: TextStyle(
+              color: Colors.grey.shade700,
+              fontSize: 12,
+            ),
+          ),
+        ),
         GestureDetector(
           onTap: () => {
             Navigator.pushNamed(context, RegisterScreen.routeName),

@@ -1,24 +1,24 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'dart:convert';
 
-import 'package:flutter/services.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:openet/components/back_login_line.dart';
 import 'package:openet/components/default_button.dart';
-import 'package:openet/utils/courses.dart';
 import 'package:openet/screens/home/home_screen.dart';
+import 'package:openet/utils/courses.dart';
 
-class RegisterForm extends StatefulWidget {
-  RegisterForm({Key key}) : super(key: key);
+class CompleteForm extends StatefulWidget {
+  CompleteForm({Key key}) : super(key: key);
 
   @override
-  _RegisterFormState createState() => _RegisterFormState();
+  _CompleteFormState createState() => _CompleteFormState();
 }
 
-class _RegisterFormState extends State<RegisterForm> {
+class _CompleteFormState extends State<CompleteForm> {
+  var storage = GetStorage('local').read('gcomplete');
   final _formKey = GlobalKey<FormState>();
   final RegExp emailValidatorRegExp =
       RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
@@ -131,6 +131,8 @@ class _RegisterFormState extends State<RegisterForm> {
             children: [
               Expanded(
                 child: TextFormField(
+                  enabled: true,
+                  initialValue: storage['f_name'],
                   decoration: InputDecoration(
                     hintText: 'Nome',
                     prefixIcon: Icon(Icons.contact_page_rounded),
@@ -142,6 +144,8 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
               Expanded(
                 child: TextFormField(
+                  enabled: true,
+                  initialValue: storage['l_name'],
                   decoration: InputDecoration(
                     hintText: 'Sobre Nome',
                     prefixIcon: Icon(Icons.contact_page_rounded),
@@ -288,15 +292,6 @@ class _RegisterFormState extends State<RegisterForm> {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
-      onSaved: (value) => email = value,
-      onChanged: (value) {
-        value = value.trim();
-        if (value.isEmpty || !emailValidatorRegExp.hasMatch(value)) {
-          return 'Informe um Email válido.';
-        } else {
-          return null;
-        }
-      },
       validator: (value) {
         value = value.trim();
         if (value.isEmpty || !emailValidatorRegExp.hasMatch(value)) {
@@ -308,6 +303,8 @@ class _RegisterFormState extends State<RegisterForm> {
           return null;
         }
       },
+      enabled: false,
+      initialValue: storage['email'],
       decoration: InputDecoration(
         hintText: 'Email',
         prefixIcon: Icon(Icons.mail),

@@ -18,6 +18,8 @@ class _LogoutIconState extends State<LogoutIcon> {
       onPressed: () {
         var st = GetStorage('local');
         st.remove('token');
+        var storage = GetStorage('local');
+        storage.write('cancel_g', true);
         setState(() {
           Navigator.pushNamed(context, LoginScreen.routeName);
         });

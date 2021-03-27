@@ -26,6 +26,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
+  <meta name="google-signin-client_id" content="79885564168-j8spfq8f9lco1231foupl3pc20u66m2o.apps.googleusercontent.com" />
   <title>openet</title>
   <link rel="manifest" href="manifest.json">
 </head>
@@ -40,6 +41,32 @@
       });
     }
   </script>
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+       https://firebase.google.com/docs/web/setup#available-libraries -->
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-analytics.js"></script>
+
+  <script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    var firebaseConfig = {
+      apiKey: "AIzaSyBJFtjZ6vcVw5vHEVgsSe5vV8EAeph6MI4",
+      authDomain: "openet-6a985.firebaseapp.com",
+      projectId: "openet-6a985",
+      storageBucket: "openet-6a985.appspot.com",
+      messagingSenderId: "38436023318",
+      appId: "1:38436023318:web:a2336bdc62478b56df5937",
+      measurementId: "G-FVYS8XVMLV"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+  </script>
+
   <script src="main.dart.js" type="application/javascript"></script>
+  
 </body>
 </html>
