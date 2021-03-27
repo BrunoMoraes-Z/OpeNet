@@ -31,6 +31,18 @@ export default class CreateUser1616451585923 implements MigrationInterface {
                     type: 'varchar'
                 },
                 {
+                    name: 'curso',
+                    type: 'varchar'
+                },
+                {
+                    name: 'periodo',
+                    type: 'numeric'
+                },
+                {
+                    name: 'dt_nascimento',
+                    type: 'date'
+                },
+                {
                     name: 'created_at',
                     type: 'timestamp',
                     default: 'now()'

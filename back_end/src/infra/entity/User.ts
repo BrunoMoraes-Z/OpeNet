@@ -16,6 +16,15 @@ export default class User {
     email: string;
 
     @Column()
+    curso: string;
+
+    @Column()
+    periodo: number;
+
+    @Column()
+    dt_nascimento: Date;
+
+    @Column()
     password: string;
 
     @CreateDateColumn()
