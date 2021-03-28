@@ -1,13 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:openet/screens/complete_register/components/complete_form.dart';
-import 'package:openet/screens/registration/components/register_form.dart';
 import 'package:openet/utils/size_config.dart';
 
 class CompleteRegister extends StatelessWidget {
   static String routeName = '/complete_register';
   const CompleteRegister({Key key}) : super(key: key);
+  static GoogleSignInAccount guser;
+
+  static String buildRoute(GoogleSignInAccount user) {
+    guser = user;
+    return routeName;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +61,9 @@ class CompleteRegister extends StatelessWidget {
                     height: constraints.maxHeight,
                     child: Padding(
                       padding: EdgeInsets.only(left: 140, right: 140),
-                      child: CompleteForm(),
+                      child: CompleteForm(
+                        user: guser,
+                      ),
                     ),
                   )
                 ],

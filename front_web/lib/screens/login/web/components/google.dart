@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:openet/components/default_button.dart';
 import 'package:openet/screens/complete_register/complete_register.dart';
 import 'package:openet/screens/home/home_screen.dart';
+import 'package:openet/utils/requests.dart';
 
 class GoogleSignInButton extends StatefulWidget {
   GoogleSignInButton({Key key}) : super(key: key);
@@ -49,38 +50,38 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
     await Future.delayed(Duration(seconds: 2));
     bool isSigned = await googleSignIn.isSignedIn();
     if (isSigned) {
-      EasyLoading.showSuccess('Logado');
-      // Navigator.pushNamed(context, HomeScreen.routeName);
+      bool has = true;
+      if (storage.hasData('tmp_gm_email')) {
+        has = await hasAccount(storage.read('tmp_gm_email'));
+        storage.remove('tmp_gm_email');
+      }
+      if (has) {
+        EasyLoading.showSuccess('Login Realizado com Sucesso.');
+        Navigator.pushNamed(context, HomeScreen.routeName);
+      } else {
+        await googleSignIn.signOut();
+      }
     }
-  }
-
-  Future<bool> hasAccount(String email) async {
-    return false;
   }
 
   void startSignIn() async {
     await googleSignIn.signOut();
-    GoogleSignInAccount user = await googleSignIn.signIn();
-    if (user == null) {
-      EasyLoading.showError('Ouve um Erro ao tentar efetuar o login.',
-          duration: Duration(seconds: 3));
-    } else {
-      bool has = await hasAccount(user.email);
-      if (has) {
-        Navigator.pushNamed(context, HomeScreen.routeName);
+    try {
+      GoogleSignInAccount user = await googleSignIn.signIn();
+      if (user == null) {
+        EasyLoading.showError('Ouve um Erro ao tentar efetuar o login.',
+            duration: Duration(seconds: 3));
       } else {
-        var st = GetStorage('local');
-        if (!st.hasData('gcomplete')) {
-          var splitted = user.displayName.split(' ');
-          st.write('gcomplete', {
-            'email': user.email,
-            'f_name': splitted[0],
-            'l_name': splitted.getRange(1, splitted.length)
-          });
-          print('salvo');
-          Navigator.pushNamed(context, CompleteRegister.routeName);
-        }
+        makeGoogleSession(user.email, user.id).then((value) {
+          if (value) {
+            Navigator.pushNamed(context, HomeScreen.routeName);
+          } else {
+            Navigator.pushNamed(context, CompleteRegister.buildRoute(user));
+            var st = GetStorage('local');
+            st.write('tmp_gm_email', user.email);
+          }
+        });
       }
-    }
+    } catch (_) {}
   }
 }

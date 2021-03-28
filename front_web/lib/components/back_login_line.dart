@@ -3,13 +3,16 @@ import 'package:get_storage/get_storage.dart';
 import 'package:openet/screens/login/login_screen.dart';
 
 class BackLoginLine extends StatelessWidget {
+  final bool clear;
   const BackLoginLine({
     Key key,
+    this.clear,
   }) : super(key: key);
 
   void returnToHome(BuildContext context) {
     var storage = GetStorage('local');
-    if (storage.hasData('gcomplete')) {
+    bool clean = clear == null ? false : clear;
+    if (storage.hasData('gcomplete') || clean) {
       storage.remove('gcomplete');
       storage.write('cancel_g', true);
     }

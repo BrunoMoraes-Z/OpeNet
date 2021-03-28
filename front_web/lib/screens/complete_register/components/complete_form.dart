@@ -1,31 +1,26 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:openet/components/back_login_line.dart';
 import 'package:openet/components/default_button.dart';
-import 'package:openet/screens/home/home_screen.dart';
 import 'package:openet/utils/courses.dart';
+import 'package:openet/utils/requests.dart';
 
 class CompleteForm extends StatefulWidget {
-  CompleteForm({Key key}) : super(key: key);
+  CompleteForm({Key key, this.user}) : super(key: key);
+  final GoogleSignInAccount user;
 
   @override
   _CompleteFormState createState() => _CompleteFormState();
 }
 
 class _CompleteFormState extends State<CompleteForm> {
-  var storage = GetStorage('local').read('gcomplete');
   final _formKey = GlobalKey<FormState>();
   final RegExp emailValidatorRegExp =
       RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-  bool _passwordVisible = false;
-  bool _passwordVisible_2 = false;
-  String email = '', password = '', password_2 = '';
-  String curso = 'Administração';
+  String email = '', curso = 'Administração';
+  String f_name = '', l_name = '';
+  int periodo = 1;
   DateTime born;
 
   void selectDate(BuildContext context) async {
@@ -51,59 +46,10 @@ class _CompleteFormState extends State<CompleteForm> {
 
   String bornDateTextField(DateTime time) {
     if (time == null) {
-      return '01/01/${DateTime.now().year - 18}';
+      return '00/00/0000';
     } else {
       return '${time.day < 10 ? '0' : ''}${time.day}/${time.month < 10 ? '0' : ''}${time.month}/${time.year}';
     }
-  }
-
-  void makeSession(String emailv, String passwordv) async {
-    var uri = Uri.parse('http://127.0.0.1:3333/sessions');
-    try {
-      await http
-          .post(
-        uri,
-        headers: {'Content-Type': 'application/json; charset=utf-8'},
-        body: utf8.encode(
-          json.encode({
-            'email': emailv,
-            'password': passwordv,
-          }),
-        ),
-      )
-          .then(
-        (response) {
-          var body = json.decode(response.body);
-          if (response.statusCode == 200) {
-            var st = GetStorage('local');
-            st.write('token', body['token']);
-            st.write('user', body['user']);
-            setState(() {
-              Navigator.pushNamed(
-                context,
-                HomeScreen.routeName,
-              );
-            });
-            EasyLoading.dismiss();
-            EasyLoading.showSuccess(
-              'Login Efetuado',
-              duration: Duration(seconds: 2),
-            );
-          } else {
-            EasyLoading.showError(
-              body['message'],
-              duration: Duration(seconds: 3),
-            );
-          }
-        },
-      );
-    } catch (_) {
-      EasyLoading.showError(
-        'Ouve um Erro ao tentar efetuar o login.',
-        duration: Duration(seconds: 5),
-      );
-    }
-    // EasyLoading.show();
   }
 
   @override
@@ -131,8 +77,17 @@ class _CompleteFormState extends State<CompleteForm> {
             children: [
               Expanded(
                 child: TextFormField(
-                  enabled: true,
-                  initialValue: storage['f_name'],
+                  initialValue: widget.user.displayName.split(' ')[0],
+                  validator: (value) {
+                    value = value.trim();
+                    if (value.isEmpty) {
+                      return 'Informe um Nome válido';
+                    }
+                    setState(() {
+                      f_name = value;
+                    });
+                    return null;
+                  },
                   decoration: InputDecoration(
                     hintText: 'Nome',
                     prefixIcon: Icon(Icons.contact_page_rounded),
@@ -144,8 +99,22 @@ class _CompleteFormState extends State<CompleteForm> {
               ),
               Expanded(
                 child: TextFormField(
-                  enabled: true,
-                  initialValue: storage['l_name'],
+                  initialValue: widget.user.displayName
+                      .split(' ')
+                      .getRange(1, widget.user.displayName.split(' ').length)
+                      .toString()
+                      .replaceFirst('(', '')
+                      .replaceFirst(')', ''),
+                  validator: (value) {
+                    value = value.trim();
+                    if (value.isEmpty) {
+                      return 'Informe um Sobre Nome válido';
+                    }
+                    setState(() {
+                      l_name = value;
+                    });
+                    return null;
+                  },
                   decoration: InputDecoration(
                     hintText: 'Sobre Nome',
                     prefixIcon: Icon(Icons.contact_page_rounded),
@@ -171,7 +140,7 @@ class _CompleteFormState extends State<CompleteForm> {
                 ),
               ),
               SizedBox(
-                width: 15,
+                width: 7,
               ),
               Expanded(
                 flex: 2,
@@ -231,7 +200,7 @@ class _CompleteFormState extends State<CompleteForm> {
                 ),
               ),
               SizedBox(
-                width: 15,
+                width: 10,
               ),
               Text(
                 'Periodo',
@@ -241,14 +210,16 @@ class _CompleteFormState extends State<CompleteForm> {
                 ),
               ),
               SizedBox(
-                width: 10,
+                width: 5,
               ),
               Expanded(
-                flex: 1,
+                flex: 2,
                 child: DropdownButtonFormField(
                   value: 1,
                   onChanged: (value) {
-                    setState(() {});
+                    setState(() {
+                      periodo = value;
+                    });
                   },
                   dropdownColor: Color(0xFFCCCCCC),
                   items: periodos.entries
@@ -265,21 +236,22 @@ class _CompleteFormState extends State<CompleteForm> {
             ],
           ),
           SizedBox(
-            height: 15,
-          ),
-          buildFormPasswordField(),
-          SizedBox(
-            height: 15,
-          ),
-          buildFormConfirmPasswordField(),
-          SizedBox(
             height: 65,
           ),
           DefaultButton(
             text: 'Cadastre-se',
             event: () {
               if (_formKey.currentState.validate()) {
-                makeSession(email, password);
+                createUser(
+                    context: context,
+                    first_name: f_name,
+                    last_name: l_name,
+                    born: born,
+                    curso: curso,
+                    email: email,
+                    password: '',
+                    periodo: periodo,
+                    g_id: widget.user.id);
               }
             },
           )
@@ -304,92 +276,10 @@ class _CompleteFormState extends State<CompleteForm> {
         }
       },
       enabled: false,
-      initialValue: storage['email'],
+      initialValue: widget.user.email,
       decoration: InputDecoration(
         hintText: 'Email',
         prefixIcon: Icon(Icons.mail),
-      ),
-    );
-  }
-
-  TextFormField buildFormPasswordField() {
-    return TextFormField(
-      obscureText: !_passwordVisible,
-      textInputAction: TextInputAction.done,
-      onSaved: (value) => password = value,
-      onChanged: (value) {
-        value = value.trim();
-        if (value.isEmpty || value.length < 6) {
-          return 'Informe uma senha válida.';
-        }
-        return null;
-      },
-      validator: (value) {
-        value = value.trim();
-        if (value.isEmpty || value.length < 6) {
-          return 'Informe uma senha válida.';
-        }
-        if (kIsWeb) {
-          password = value;
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        hintText: 'Senha',
-        prefixIcon: Icon(Icons.lock_outline),
-        suffixIcon: IconButton(
-          icon: Icon(
-            _passwordVisible
-                ? Icons.visibility_outlined
-                : Icons.visibility_off_outlined,
-          ),
-          onPressed: () {
-            setState(() {
-              _passwordVisible = !_passwordVisible;
-            });
-          },
-        ),
-      ),
-    );
-  }
-
-  TextFormField buildFormConfirmPasswordField() {
-    return TextFormField(
-      obscureText: !_passwordVisible_2,
-      textInputAction: TextInputAction.done,
-      onSaved: (value) => password_2 = value,
-      onChanged: (value) {
-        value = value.trim();
-        if (value.isEmpty || value.length < 6) {
-          return 'Informe uma senha válida.';
-        }
-        return null;
-      },
-      validator: (value) {
-        value = value.trim();
-        if (value.isEmpty || value.length < 6) {
-          return 'Informe uma senha válida.';
-        }
-        if (kIsWeb) {
-          password = value;
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        hintText: 'Confirmar Senha',
-        prefixIcon: Icon(Icons.lock_outline),
-        suffixIcon: IconButton(
-          icon: Icon(
-            _passwordVisible_2
-                ? Icons.visibility_outlined
-                : Icons.visibility_off_outlined,
-          ),
-          onPressed: () {
-            setState(() {
-              _passwordVisible_2 = !_passwordVisible_2;
-            });
-          },
-        ),
       ),
     );
   }

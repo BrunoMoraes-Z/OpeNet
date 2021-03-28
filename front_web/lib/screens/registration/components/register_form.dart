@@ -1,15 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:http/http.dart' as http;
-import 'package:get_storage/get_storage.dart';
 import 'package:openet/components/back_login_line.dart';
 import 'package:openet/components/default_button.dart';
 import 'package:openet/utils/courses.dart';
-import 'package:openet/screens/home/home_screen.dart';
+import 'package:openet/utils/requests.dart';
 
 class RegisterForm extends StatefulWidget {
   RegisterForm({Key key}) : super(key: key);
@@ -26,6 +22,8 @@ class _RegisterFormState extends State<RegisterForm> {
   bool _passwordVisible_2 = false;
   String email = '', password = '', password_2 = '';
   String curso = 'Administração';
+  String f_name = '', l_name = '';
+  int periodo = 1;
   DateTime born;
 
   void selectDate(BuildContext context) async {
@@ -51,59 +49,10 @@ class _RegisterFormState extends State<RegisterForm> {
 
   String bornDateTextField(DateTime time) {
     if (time == null) {
-      return '01/01/${DateTime.now().year - 18}';
+      return '00/00/0000';
     } else {
       return '${time.day < 10 ? '0' : ''}${time.day}/${time.month < 10 ? '0' : ''}${time.month}/${time.year}';
     }
-  }
-
-  void makeSession(String emailv, String passwordv) async {
-    var uri = Uri.parse('http://127.0.0.1:3333/sessions');
-    try {
-      await http
-          .post(
-        uri,
-        headers: {'Content-Type': 'application/json; charset=utf-8'},
-        body: utf8.encode(
-          json.encode({
-            'email': emailv,
-            'password': passwordv,
-          }),
-        ),
-      )
-          .then(
-        (response) {
-          var body = json.decode(response.body);
-          if (response.statusCode == 200) {
-            var st = GetStorage('local');
-            st.write('token', body['token']);
-            st.write('user', body['user']);
-            setState(() {
-              Navigator.pushNamed(
-                context,
-                HomeScreen.routeName,
-              );
-            });
-            EasyLoading.dismiss();
-            EasyLoading.showSuccess(
-              'Login Efetuado',
-              duration: Duration(seconds: 2),
-            );
-          } else {
-            EasyLoading.showError(
-              body['message'],
-              duration: Duration(seconds: 3),
-            );
-          }
-        },
-      );
-    } catch (_) {
-      EasyLoading.showError(
-        'Ouve um Erro ao tentar efetuar o login.',
-        duration: Duration(seconds: 5),
-      );
-    }
-    // EasyLoading.show();
   }
 
   @override
@@ -131,6 +80,16 @@ class _RegisterFormState extends State<RegisterForm> {
             children: [
               Expanded(
                 child: TextFormField(
+                  validator: (value) {
+                    value = value.trim();
+                    if (value.isEmpty) {
+                      return 'Informe um Nome válido';
+                    }
+                    setState(() {
+                      f_name = value;
+                    });
+                    return null;
+                  },
                   decoration: InputDecoration(
                     hintText: 'Nome',
                     prefixIcon: Icon(Icons.contact_page_rounded),
@@ -142,6 +101,16 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
               Expanded(
                 child: TextFormField(
+                  validator: (value) {
+                    value = value.trim();
+                    if (value.isEmpty) {
+                      return 'Informe um Sobre Nome válido';
+                    }
+                    setState(() {
+                      l_name = value;
+                    });
+                    return null;
+                  },
                   decoration: InputDecoration(
                     hintText: 'Sobre Nome',
                     prefixIcon: Icon(Icons.contact_page_rounded),
@@ -244,7 +213,9 @@ class _RegisterFormState extends State<RegisterForm> {
                 child: DropdownButtonFormField(
                   value: 1,
                   onChanged: (value) {
-                    setState(() {});
+                    setState(() {
+                      periodo = value;
+                    });
                   },
                   dropdownColor: Color(0xFFCCCCCC),
                   items: periodos.entries
@@ -275,7 +246,15 @@ class _RegisterFormState extends State<RegisterForm> {
             text: 'Cadastre-se',
             event: () {
               if (_formKey.currentState.validate()) {
-                makeSession(email, password);
+                createUser(
+                    context: context,
+                    first_name: f_name,
+                    last_name: l_name,
+                    born: born,
+                    curso: curso,
+                    email: email,
+                    password: password,
+                    periodo: periodo);
               }
             },
           )
@@ -370,11 +349,15 @@ class _RegisterFormState extends State<RegisterForm> {
       },
       validator: (value) {
         value = value.trim();
+        if (kIsWeb) {
+          password_2 = value;
+        }
         if (value.isEmpty || value.length < 6) {
           return 'Informe uma senha válida.';
-        }
-        if (kIsWeb) {
-          password = value;
+        } else {
+          if (password_2 != password) {
+            return 'As senhas não estão iguais.';
+          }
         }
         return null;
       },

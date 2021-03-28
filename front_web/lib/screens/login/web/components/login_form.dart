@@ -2,18 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:http/http.dart' as http;
-import 'package:get_storage/get_storage.dart';
 import 'package:openet/components/default_button.dart';
-import 'package:openet/screens/complete_register/complete_register.dart';
-import 'package:openet/screens/home/home_screen.dart';
 import 'package:openet/screens/login/web/components/google.dart';
 import 'package:openet/screens/recover/recover_screen.dart';
 import 'package:openet/screens/registration/register_screen.dart';
+import 'package:openet/utils/requests.dart';
 
 class LoginForm extends StatefulWidget {
   LoginForm({Key key}) : super(key: key);
@@ -28,55 +23,6 @@ class _LoginFormState extends State<LoginForm> {
       RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
   bool _passwordVisible = false;
   String email = '', password = '';
-
-  void makeSession(String emailv, String passwordv) async {
-    var uri = Uri.parse('http://127.0.0.1:3333/sessions');
-    try {
-      await http
-          .post(
-        uri,
-        headers: {'Content-Type': 'application/json; charset=utf-8'},
-        body: utf8.encode(
-          json.encode({
-            'email': emailv,
-            'password': passwordv,
-          }),
-        ),
-      )
-          .then(
-        (response) {
-          var body = json.decode(response.body);
-          if (response.statusCode == 200) {
-            var st = GetStorage('local');
-            st.write('token', body['token']);
-            st.write('user', body['user']);
-            setState(() {
-              Navigator.pushNamed(
-                context,
-                HomeScreen.routeName,
-              );
-            });
-            EasyLoading.dismiss();
-            EasyLoading.showSuccess(
-              'Login Realizado com Sucesso.',
-              duration: Duration(seconds: 2),
-            );
-          } else {
-            EasyLoading.showError(
-              'Erro de Login. Tente Novamente.',
-              // body['message'],
-              duration: Duration(seconds: 3),
-            );
-          }
-        },
-      );
-    } catch (_) {
-      EasyLoading.showError(
-        'Ouve um Erro ao tentar efetuar o login.',
-        duration: Duration(seconds: 5),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,26 +85,12 @@ class _LoginFormState extends State<LoginForm> {
             text: 'Entrar',
             event: () {
               if (_formKey.currentState.validate()) {
-                makeSession(email, password);
+                makeSession(
+                  context: context,
+                  email: email,
+                  password: password,
+                );
               }
-            },
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          DefaultButton(
-            text: 'teste',
-            event: () {
-              var st = GetStorage('local');
-              if (!st.hasData('gcomplete')) {
-                st.write('gcomplete', {
-                  'email': 'moraes.7@gmail.com',
-                  'f_name': 'Bruno',
-                  'l_name': 'Moraes'
-                });
-                print('salvo');
-              }
-              Navigator.pushNamed(context, CompleteRegister.routeName);
             },
           ),
           SizedBox(
