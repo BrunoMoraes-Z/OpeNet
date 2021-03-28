@@ -26,6 +26,9 @@ export default class User {
 
     @Column()
     password: string;
+    
+    @Column()
+    g_id: string;
 
     @CreateDateColumn()
     created_at: Date;

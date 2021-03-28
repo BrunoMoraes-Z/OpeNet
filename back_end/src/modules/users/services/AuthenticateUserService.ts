@@ -1,7 +1,6 @@
-import { compare, hash } from "bcryptjs";
+import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
-import { getRepository, SimpleConsoleLogger } from "typeorm";
-import { print } from "util";
+import { getRepository } from "typeorm";
 
 import config from '../../../config/auth';
 import User from "../../../infra/entity/User";
@@ -24,7 +23,13 @@ export default class AuthenticateUserService {
 
     const similar = await compare(password, user.password);
     if (!similar) {
-      throw new AppError('Email/Senha inválidos.', 401);
+      if (user.g_id.length > 0) {
+        if (user.g_id != password) {
+          throw new AppError('Email/Senha inválidos.', 401);
+        }
+      } else {
+        throw new AppError('Email/Senha inválidos.', 401);
+      }
     }
 
     const token = sign({}, config.jwt.secret, {
@@ -33,6 +38,7 @@ export default class AuthenticateUserService {
     });
 
     delete user.password;
+    delete user.g_id;
 
     return { user, token };
   }
