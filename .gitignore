@@ -1,6 +1,7 @@
 **/node_modules
-backend/dist
-backend/yarn*
+back_end/dist
+back_end/yarn.lock
+back_end/yarn-error.log
 
 **/.idea/
 **/.vscode/
