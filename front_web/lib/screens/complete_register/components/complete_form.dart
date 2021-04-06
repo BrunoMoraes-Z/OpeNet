@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:openet/components/back_login_line.dart';
 import 'package:openet/components/default_button.dart';
-import 'package:openet/utils/courses.dart';
+import 'package:http/http.dart' as http;
 import 'package:openet/utils/requests.dart';
 
 class CompleteForm extends StatefulWidget {
@@ -18,6 +20,7 @@ class _CompleteFormState extends State<CompleteForm> {
   final _formKey = GlobalKey<FormState>();
   final RegExp emailValidatorRegExp =
       RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  Map<String, List<int>> cursos;
   String email = '', curso = 'Administração';
   String f_name = '', l_name = '';
   int periodo = 1;
@@ -52,8 +55,28 @@ class _CompleteFormState extends State<CompleteForm> {
     }
   }
 
+  Future<void> getCursos() async {
+    var uri = Uri.parse('http://127.0.0.1:3333/cursos');
+    var response = await http.get(uri);
+    if (response.statusCode == 200) {
+      cursos = new Map();
+      var body = json.decode(response.body);
+      for (int i = 0; i < body.length; i++) {
+        List<int> periods = new List();
+        for (int p = 1; p < int.parse(body[i]['max_periodo']) + 1; p++) {
+          periods.add(p);
+        }
+        cursos.putIfAbsent(body[i]['name'], () => periods);
+      }
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (cursos == null) {
+      getCursos();
+    }
     return Form(
       key: _formKey,
       child: Column(
@@ -144,21 +167,23 @@ class _CompleteFormState extends State<CompleteForm> {
               ),
               Expanded(
                 flex: 2,
-                child: DropdownButtonFormField(
-                  value: curso,
-                  onChanged: (value) {
-                    setState(() {
-                      curso = value;
-                    });
-                  },
-                  dropdownColor: Color(0xFFCCCCCC),
-                  items: periodos.keys.map((value) {
-                    return DropdownMenuItem(
-                      child: Text(value),
-                      value: value,
-                    );
-                  }).toList(),
-                ),
+                child: cursos != null
+                    ? DropdownButtonFormField(
+                        value: curso,
+                        onChanged: (value) {
+                          setState(() {
+                            curso = value;
+                          });
+                        },
+                        dropdownColor: Color(0xFFCCCCCC),
+                        items: cursos.keys.map((value) {
+                          return DropdownMenuItem(
+                            child: Text(value),
+                            value: value,
+                          );
+                        }).toList(),
+                      )
+                    : DropdownButtonFormField(items: []),
               ),
             ],
           ),
@@ -213,25 +238,27 @@ class _CompleteFormState extends State<CompleteForm> {
                 width: 5,
               ),
               Expanded(
-                flex: 2,
-                child: DropdownButtonFormField(
-                  value: 1,
-                  onChanged: (value) {
-                    setState(() {
-                      periodo = value;
-                    });
-                  },
-                  dropdownColor: Color(0xFFCCCCCC),
-                  items: periodos.entries
-                      .firstWhere((element) => element.key == curso)
-                      .value
-                      .map((value) {
-                    return DropdownMenuItem(
-                      child: Text('$value'),
-                      value: value,
-                    );
-                  }).toList(),
-                ),
+                flex: 1,
+                child: cursos != null
+                    ? DropdownButtonFormField(
+                        value: 1,
+                        onChanged: (value) {
+                          setState(() {
+                            periodo = value;
+                          });
+                        },
+                        dropdownColor: Color(0xFFCCCCCC),
+                        items: cursos.entries
+                            .firstWhere((element) => element.key == curso)
+                            .value
+                            .map((value) {
+                          return DropdownMenuItem(
+                            child: Text('$value'),
+                            value: value,
+                          );
+                        }).toList(),
+                      )
+                    : DropdownButtonFormField(items: []),
               ),
             ],
           ),
