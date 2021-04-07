@@ -171,7 +171,7 @@ class BuildForgotAndRegisterComponents extends StatelessWidget {
             Navigator.pushNamed(context, RegisterScreen.routeName),
           },
           child: Text(
-            'Registrar',
+            'Cadastrar Novo Usuário',
             style: TextStyle(
               color: Colors.grey.shade700,
               fontSize: 12,
