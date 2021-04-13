@@ -25,7 +25,7 @@ void createUser({
       'last_name': last_name,
       'email': email,
       'password': password,
-      'curso': curso,
+      'curso_id': curso,
       'periodo': periodo,
       'dt_nascimento': '${born.day}/${born.month}/${born.year}',
       'g_id': g_id != null ? g_id : ''

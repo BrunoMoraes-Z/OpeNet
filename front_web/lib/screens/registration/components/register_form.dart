@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:openet/components/back_login_line.dart';
 import 'package:openet/components/default_button.dart';
+import 'package:openet/models/curso.dart';
 import 'package:openet/utils/requests.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,9 +23,9 @@ class _RegisterFormState extends State<RegisterForm> {
       RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
   bool _passwordVisible = false;
   bool _passwordVisible_2 = false;
-  Map<String, List<int>> cursos;
   String email = '', password = '', password_2 = '';
   String curso = 'Administração';
+  List<Curso> cursos;
   String f_name = '', l_name = '';
   int periodo = 1;
   DateTime born;
@@ -62,15 +63,12 @@ class _RegisterFormState extends State<RegisterForm> {
     var uri = Uri.parse('http://127.0.0.1:3333/cursos');
     var response = await http.get(uri);
     if (response.statusCode == 200) {
-      cursos = new Map();
+      cursos = new List();
       var body = json.decode(response.body);
       for (int i = 0; i < body.length; i++) {
-        List<int> periods = new List();
-        for (int p = 1; p < int.parse(body[i]['max_periodo']) + 1; p++) {
-          periods.add(p);
-        }
-        cursos.putIfAbsent(body[i]['name'], () => periods);
+        cursos.add(Curso.fromJson(body[i]));
       }
+      print(cursos.length);
       setState(() {});
     }
   }
@@ -165,17 +163,17 @@ class _RegisterFormState extends State<RegisterForm> {
                 flex: 2,
                 child: cursos != null
                     ? DropdownButtonFormField(
-                        value: curso,
+                        value: cursos.first.id,
                         onChanged: (value) {
                           setState(() {
                             curso = value;
                           });
                         },
                         dropdownColor: Color(0xFFCCCCCC),
-                        items: cursos.keys.map((value) {
+                        items: cursos.map((c) {
                           return DropdownMenuItem(
-                            child: Text(value),
-                            value: value,
+                            child: Text(c.name),
+                            value: c.id,
                           );
                         }).toList(),
                       )
@@ -235,7 +233,7 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
               Expanded(
                 flex: 1,
-                child: cursos != null
+                child: cursos != null && cursos.length > 0 && curso != null
                     ? DropdownButtonFormField(
                         value: 1,
                         onChanged: (value) {
@@ -243,14 +241,14 @@ class _RegisterFormState extends State<RegisterForm> {
                             periodo = value;
                           });
                         },
-                        dropdownColor: Color(0xFFCCCCCC),
-                        items: cursos.entries
-                            .firstWhere((element) => element.key == curso)
-                            .value
-                            .map((value) {
+                        items: cursos
+                            .firstWhere((element) => element.id == curso,
+                                orElse: () => cursos.first)
+                            .periodos
+                            .map((e) {
                           return DropdownMenuItem(
-                            child: Text('$value'),
-                            value: value,
+                            child: Text('$e'),
+                            value: e,
                           );
                         }).toList(),
                       )
