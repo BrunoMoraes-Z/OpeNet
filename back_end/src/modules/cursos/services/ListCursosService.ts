@@ -16,7 +16,6 @@ export default class ListCursosService {
     cursos = cursos.map(c => {
       delete c.created_at;
       delete c.updated_at;
-      delete c.curso_id;
       return c;
     });
 

@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from "typeorm";
+import Curso from "./Curso";
 
 @Entity('users')
 export default class User {
@@ -16,7 +17,10 @@ export default class User {
     email: string;
 
     @Column()
-    curso: string;
+    curso_id: string;
+
+    @JoinColumn({ name: 'curso_id' })
+    curso: Curso;
 
     @Column()
     periodo: number;

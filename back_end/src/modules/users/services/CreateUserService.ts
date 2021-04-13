@@ -7,7 +7,7 @@ interface Request {
   first_name: string;
   last_name: string;
   email: string;
-  curso: string;
+  curso_id: string;
   periodo: number;
   dt_nasc: Date;
   password: string;
@@ -16,7 +16,7 @@ interface Request {
 
 export default class CreateUserService {
 
-  public async execute({ first_name, last_name, email, curso, periodo, dt_nasc, password, g_id }: Request): Promise<User> {
+  public async execute({ first_name, last_name, email, curso_id, periodo, dt_nasc, password, g_id }: Request): Promise<User> {
     const repository = getRepository(User);
     const exists = await repository.findOne({ where: { email } });
     if (exists) {
@@ -27,7 +27,7 @@ export default class CreateUserService {
       first_name,
       last_name,
       email,
-      curso,
+      curso_id,
       periodo,
       dt_nascimento: dt_nasc,
       password: hashed,
