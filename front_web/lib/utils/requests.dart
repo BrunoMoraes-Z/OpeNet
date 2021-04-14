@@ -16,6 +16,7 @@ void createUser({
   String curso,
   String g_id,
   int periodo,
+  int init_curso,
   DateTime born,
 }) async {
   var uri = Uri.parse('http://127.0.0.1:3333/users');
@@ -27,6 +28,7 @@ void createUser({
       'password': password,
       'curso_id': curso,
       'periodo': periodo,
+      'ano_curso': init_curso,
       'dt_nascimento': '${born.day}/${born.month}/${born.year}',
       'g_id': g_id != null ? g_id : ''
     });

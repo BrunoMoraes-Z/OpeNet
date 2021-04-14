@@ -21,13 +21,11 @@ class _RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
   final RegExp emailValidatorRegExp =
       RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-  bool _passwordVisible = false;
-  bool _passwordVisible_2 = false;
-  String email = '', password = '', password_2 = '';
-  String curso = 'Administração';
   List<Curso> cursos;
-  String f_name = '', l_name = '';
-  int periodo = 1;
+  bool _passwordVisible = false, _passwordVisible_2 = false;
+  String email = '', password = '', password_2 = '';
+  String curso = '', f_name = '', l_name = '';
+  int periodo = 1, init_curso = 0;
   DateTime born;
 
   void selectDate(BuildContext context) async {
@@ -68,7 +66,7 @@ class _RegisterFormState extends State<RegisterForm> {
       for (int i = 0; i < body.length; i++) {
         cursos.add(Curso.fromJson(body[i]));
       }
-      print(cursos.length);
+      curso = cursos.first.id;
       setState(() {});
     }
   }
@@ -181,46 +179,11 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
             ],
           ),
+          SizedBox(
+            width: 15,
+          ),
           Row(
             children: [
-              Container(
-                width: 120,
-                child: Text(
-                  'Data De Nascimento',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xff7E7E7E),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  selectDate(context);
-                },
-                child: Container(
-                  height: 50,
-                  width: 120,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Color(0xFF7E7E7E),
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    bornDateTextField(born),
-                    style: TextStyle(
-                      fontSize: 15,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 15,
-              ),
               Text(
                 'Periodo',
                 style: TextStyle(
@@ -254,6 +217,56 @@ class _RegisterFormState extends State<RegisterForm> {
                       )
                     : DropdownButtonFormField(items: []),
               ),
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                'Ano de Inicio',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xff7E7E7E),
+                ),
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Expanded(
+                child: buildInitYearFormFiled(),
+              )
+            ],
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          Row(
+            children: [
+              Container(
+                child: Text(
+                  'Data De Nascimento',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xff7E7E7E),
+                  ),
+                ),
+              ),
+              Spacer(),
+              GestureDetector(
+                onTap: () {
+                  selectDate(context);
+                },
+                child: Container(
+                  height: 50,
+                  width: 120,
+                  alignment: Alignment.center,
+                  child: Text(
+                    bornDateTextField(born),
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
             ],
           ),
           SizedBox(
@@ -272,18 +285,56 @@ class _RegisterFormState extends State<RegisterForm> {
             event: () {
               if (_formKey.currentState.validate()) {
                 createUser(
-                    context: context,
-                    first_name: f_name,
-                    last_name: l_name,
-                    born: born,
-                    curso: curso,
-                    email: email,
-                    password: password,
-                    periodo: periodo);
+                  context: context,
+                  first_name: f_name,
+                  last_name: l_name,
+                  born: born,
+                  curso: curso,
+                  email: email,
+                  password: password,
+                  periodo: periodo,
+                  init_curso: init_curso,
+                );
               }
             },
           )
         ],
+      ),
+    );
+  }
+
+  TextFormField buildInitYearFormFiled() {
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      textInputAction: TextInputAction.next,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+      ],
+      // onSaved: (value) => init_curso = value,
+      onChanged: (value) {
+        value = value.trim();
+        try {
+          init_curso = int.parse(value);
+        } catch (_) {
+          return 'Informe um ano válido';
+        }
+        return null;
+      },
+      validator: (value) {
+        value = value.trim();
+        try {
+          init_curso = int.parse(value);
+        } catch (_) {
+          return 'Informe um ano válido';
+        }
+        if (kIsWeb) {
+          init_curso = int.parse(value);
+        }
+        return null;
+      },
+      textAlign: TextAlign.center,
+      decoration: InputDecoration(
+        hintText: '2000',
       ),
     );
   }
