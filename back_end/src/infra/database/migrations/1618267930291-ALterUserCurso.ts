@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn, TableForeignKey } from "typeorm";
 
-export class ALterUserCurso1618267930291 implements MigrationInterface {
+export class AlterUserCurso1618267930291 implements MigrationInterface {
 
     public async up(qr: QueryRunner): Promise<void> {
         await qr.dropColumn('users', 'curso');

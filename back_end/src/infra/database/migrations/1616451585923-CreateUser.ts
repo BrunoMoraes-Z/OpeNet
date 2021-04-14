@@ -39,6 +39,10 @@ export default class CreateUser1616451585923 implements MigrationInterface {
                     type: 'numeric'
                 },
                 {
+                    name: 'ano_curso',
+                    type: 'numeric'
+                },
+                {
                     name: 'dt_nascimento',
                     type: 'date'
                 },

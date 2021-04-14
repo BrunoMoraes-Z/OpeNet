@@ -26,6 +26,9 @@ export default class User {
     periodo: number;
 
     @Column()
+    ano_curso: number;
+
+    @Column()
     dt_nascimento: Date;
 
     @Column()
