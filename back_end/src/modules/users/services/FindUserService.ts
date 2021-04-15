@@ -1,4 +1,4 @@
-import { getRepository, SimpleConsoleLogger } from "typeorm";
+import { getRepository } from "typeorm";
 
 import config from '../../../config/auth';
 import User from "../../../infra/entity/User";

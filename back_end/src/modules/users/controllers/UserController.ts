@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
+import { getRepository } from "typeorm";
+import User from "../../../infra/entity/User";
 import CreateUserService from "../services/CreateUserService";
 import FindUserService from "../services/FindUserService";
+import RecoverPasswordService from "../services/RecoverPasswordService";
 
 export default class UserController {
 
@@ -17,7 +20,7 @@ export default class UserController {
     return response.json(user);
   }
 
-  public async hasUser(request: Request, respose: Response): Promise<Response> {
+  public async hasUser(request: Request, response: Response): Promise<Response> {
     const key = request.headers['server-key'];
     const email = request.headers['email'];
 
@@ -25,7 +28,21 @@ export default class UserController {
 
     const result = await service.execute(email.toString(), key.toString());
 
-    return respose.status(result ? 200 : 400).json({});
+    return response.status(result ? 200 : 400).json({});
+  }
+
+  public async recover(request: Request, response: Response): Promise<Response> {
+    const { email } = request.body;
+
+    const repository = getRepository(User);
+    const user = await repository.findOne({ where: { email } });
+    if (user) {
+      new RecoverPasswordService().execute(user);
+    }
+
+    return response.json({
+      message: 'Se o E-Mail informado estiver cadastrado será enviado uma mensagem para recuperação.'
+    });
   }
 
 }
