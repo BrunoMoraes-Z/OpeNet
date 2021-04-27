@@ -46,7 +46,7 @@ class CompleteRegister extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.only(left: 50),
                           child: SvgPicture.asset(
-                            '${kIsWeb ? '' : 'assets'}/register_new_user.svg',
+                            'assets/register_new_user.svg',
                             width: (constraints.maxWidth / 2) - 100,
                           ),
                         ),

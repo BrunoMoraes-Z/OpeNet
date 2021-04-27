@@ -39,7 +39,7 @@ class Body extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.only(left: 50),
                           child: SvgPicture.asset(
-                            '${kIsWeb ? '' : 'assets'}/recover_password.svg',
+                            'assets/recover_password.svg',
                             width: (constraints.maxWidth / 2) - 100,
                           ),
                         ),

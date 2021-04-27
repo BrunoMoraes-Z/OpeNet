@@ -23,7 +23,7 @@ class _CompleteFormState extends State<CompleteForm> {
   final RegExp emailValidatorRegExp =
       RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
   List<Curso> cursos;
-  String email = '', curso = '', f_name = '', l_name = '';
+  String email = '', curso = '', f_name = '', l_name = '', u_name;
   int periodo = 1, init_curso = 0;
   DateTime born;
 
@@ -147,7 +147,11 @@ class _CompleteFormState extends State<CompleteForm> {
           SizedBox(
             height: 15,
           ),
-          buildEmailFormFiled(),
+          buildEmailFormField(),
+          SizedBox(
+            height: 15,
+          ),
+          buildUserNameFormField(),
           SizedBox(
             height: 15,
           ),
@@ -237,7 +241,7 @@ class _CompleteFormState extends State<CompleteForm> {
                 width: 5,
               ),
               Expanded(
-                child: buildInitYearFormFiled(),
+                child: buildInitYearFormField(),
               )
             ],
           ),
@@ -286,6 +290,7 @@ class _CompleteFormState extends State<CompleteForm> {
                   context: context,
                   first_name: f_name,
                   last_name: l_name,
+                  user_name: u_name,
                   born: born,
                   curso: curso,
                   email: email,
@@ -302,7 +307,7 @@ class _CompleteFormState extends State<CompleteForm> {
     );
   }
 
-  TextFormField buildInitYearFormFiled() {
+  TextFormField buildInitYearFormField() {
     return TextFormField(
       keyboardType: TextInputType.number,
       textInputAction: TextInputAction.next,
@@ -338,10 +343,19 @@ class _CompleteFormState extends State<CompleteForm> {
     );
   }
 
-  TextFormField buildEmailFormFiled() {
+  TextFormField buildEmailFormField() {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
+      onSaved: (value) => email = value,
+      onChanged: (value) {
+        value = value.trim();
+        if (value.isEmpty || !emailValidatorRegExp.hasMatch(value)) {
+          return 'Informe um Email válido.';
+        } else {
+          return null;
+        }
+      },
       validator: (value) {
         value = value.trim();
         if (value.isEmpty || !emailValidatorRegExp.hasMatch(value)) {
@@ -358,6 +372,31 @@ class _CompleteFormState extends State<CompleteForm> {
       decoration: InputDecoration(
         hintText: 'Email',
         prefixIcon: Icon(Icons.mail),
+      ),
+    );
+  }
+
+  TextFormField buildUserNameFormField() {
+    return TextFormField(
+      onChanged: (value) {
+        u_name = value;
+      },
+      validator: (value) {
+        value = value.trim();
+        if (value.isEmpty) {
+          return 'Informe um Nome de usuário válido.';
+        }
+        if (value.contains(" ")) {
+          return 'não pode conter espaços em branco.';
+        }
+        setState(() {
+          u_name = value;
+        });
+        return null;
+      },
+      decoration: InputDecoration(
+        hintText: 'Nome de usuário',
+        prefixIcon: Icon(Icons.contact_page_rounded),
       ),
     );
   }

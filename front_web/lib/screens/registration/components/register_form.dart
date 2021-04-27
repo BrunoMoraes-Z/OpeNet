@@ -24,7 +24,7 @@ class _RegisterFormState extends State<RegisterForm> {
   List<Curso> cursos;
   bool _passwordVisible = false, _passwordVisible_2 = false;
   String email = '', password = '', password_2 = '';
-  String curso = '', f_name = '', l_name = '';
+  String curso = '', f_name = '', l_name = '', u_name;
   int periodo = 1, init_curso = 0;
   DateTime born;
 
@@ -141,7 +141,11 @@ class _RegisterFormState extends State<RegisterForm> {
           SizedBox(
             height: 15,
           ),
-          buildEmailFormFiled(),
+          buildEmailFormField(),
+          SizedBox(
+            height: 15,
+          ),
+          buildUserNameFormField(),
           SizedBox(
             height: 15,
           ),
@@ -231,7 +235,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 width: 5,
               ),
               Expanded(
-                child: buildInitYearFormFiled(),
+                child: buildInitYearFormField(),
               )
             ],
           ),
@@ -288,6 +292,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   context: context,
                   first_name: f_name,
                   last_name: l_name,
+                  user_name: u_name,
                   born: born,
                   curso: curso,
                   email: email,
@@ -303,7 +308,7 @@ class _RegisterFormState extends State<RegisterForm> {
     );
   }
 
-  TextFormField buildInitYearFormFiled() {
+  TextFormField buildInitYearFormField() {
     return TextFormField(
       keyboardType: TextInputType.number,
       textInputAction: TextInputAction.next,
@@ -339,7 +344,7 @@ class _RegisterFormState extends State<RegisterForm> {
     );
   }
 
-  TextFormField buildEmailFormFiled() {
+  TextFormField buildEmailFormField() {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
@@ -366,6 +371,31 @@ class _RegisterFormState extends State<RegisterForm> {
       decoration: InputDecoration(
         hintText: 'Email',
         prefixIcon: Icon(Icons.mail),
+      ),
+    );
+  }
+
+  TextFormField buildUserNameFormField() {
+    return TextFormField(
+      onChanged: (value) {
+        u_name = value;
+      },
+      validator: (value) {
+        value = value.trim();
+        if (value.isEmpty) {
+          return 'Informe um Nome de usuário válido.';
+        }
+        if (value.contains(" ")) {
+          return 'não pode conter espaços em branco.';
+        }
+        setState(() {
+          u_name = value;
+        });
+        return null;
+      },
+      decoration: InputDecoration(
+        hintText: 'Nome de usuário',
+        prefixIcon: Icon(Icons.contact_page_rounded),
       ),
     );
   }

@@ -34,7 +34,7 @@ class BodyWeb extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(right: 50),
                         child: SvgPicture.asset(
-                          '${kIsWeb ? '' : 'assets'}/logo_web.svg',
+                          'assets/logo_web.svg',
                           width: (constraints.maxWidth / 2) - 100,
                         ),
                       ),

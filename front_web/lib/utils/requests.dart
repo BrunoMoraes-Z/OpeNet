@@ -11,6 +11,7 @@ void createUser({
   BuildContext context,
   String first_name,
   String last_name,
+  String user_name,
   String email,
   String password,
   String curso,
@@ -24,6 +25,7 @@ void createUser({
     var body = json.encode({
       'first_name': first_name,
       'last_name': last_name,
+      'user_name': user_name,
       'email': email,
       'password': password,
       'curso_id': curso,
