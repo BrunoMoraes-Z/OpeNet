@@ -48,7 +48,8 @@ class _LoginFormState extends State<LoginForm> {
             onSaved: (value) => email = value,
             onChanged: (value) {
               value = value.trim();
-              if (value.isEmpty || !emailValidatorRegExp.hasMatch(value)) {
+              // if (value.isEmpty || !emailValidatorRegExp.hasMatch(value)) {
+              if (value.isEmpty) {
                 return 'Informe um Email válido.';
               } else {
                 return null;
@@ -56,7 +57,8 @@ class _LoginFormState extends State<LoginForm> {
             },
             validator: (value) {
               value = value.trim();
-              if (value.isEmpty || !emailValidatorRegExp.hasMatch(value)) {
+              // if (value.isEmpty || !emailValidatorRegExp.hasMatch(value)) {
+              if (value.isEmpty) {
                 return 'Informe um Email válido.';
               } else {
                 if (kIsWeb || Platform.isWindows) {
