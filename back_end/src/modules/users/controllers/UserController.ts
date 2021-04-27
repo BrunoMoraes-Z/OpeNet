@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import User from "../../../infra/entity/User";
+import AvailableUserNameService from "../services/AvailableUserNameService";
 import CreateUserService from "../services/CreateUserService";
 import FindUserService from "../services/FindUserService";
 import RecoverPasswordService from "../services/RecoverPasswordService";
@@ -8,12 +9,12 @@ import RecoverPasswordService from "../services/RecoverPasswordService";
 export default class UserController {
 
   public async create(request: Request, response: Response): Promise<Response> {
-    const { first_name, last_name, email, curso_id, periodo, ano_curso, dt_nascimento, password, g_id } = request.body;
+    const { first_name, last_name, user_name, email, curso_id, periodo, ano_curso, dt_nascimento, password, g_id } = request.body;
     const service = new CreateUserService();
     const splitted = dt_nascimento.split('/');
     const dt_nasc = new Date(`${splitted[1]}/${splitted[0]}/${splitted[2]}`);
 
-    const user = await service.execute({ first_name, last_name, email, curso_id, periodo, ano_curso, dt_nasc, password, g_id });
+    const user = await service.execute({ first_name, last_name, user_name, email, curso_id, periodo, ano_curso, dt_nasc, password, g_id });
 
     delete user.password;
 
@@ -28,7 +29,18 @@ export default class UserController {
 
     const result = await service.execute(email.toString(), key.toString());
 
-    return response.status(result ? 200 : 400).json({});
+    return response.status(result ? 200 : 400).json();
+  }
+
+  public async available(request: Request, response: Response): Promise<Response> {
+    const key = request.headers['server-key'];
+    const user_name = request.headers['user_name'];
+
+    const service = new AvailableUserNameService();
+
+    const result = await service.execute(user_name.toString(), key.toString());
+
+    return response.status(result ? 200 : 400).json();
   }
 
   public async recover(request: Request, response: Response): Promise<Response> {
