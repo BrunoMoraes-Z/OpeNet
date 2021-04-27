@@ -16,7 +16,8 @@ export default class AuthenticateUserService {
   public async execute({ email, password }: Request): Promise<{ user: User, token: string }> {
     const repository = getRepository(User);
 
-    const user = await repository.findOne({ where: { email } });
+    const user = await repository.createQueryBuilder().where({ email }).orWhere('"user_name" = :user_name', { user_name: email }).getOne();
+    // const user = await repository.findOne({ where: { email } });
     if (!user) {
       throw new AppError('Email/Senha inválidos.', 401);
     }
