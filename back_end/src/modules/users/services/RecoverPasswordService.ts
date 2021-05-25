@@ -14,7 +14,7 @@ export default class RecoverPasswordService {
         link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
       }
     });
-    
+
     Mail.to = user.email;
     Mail.subject = 'Solicitação para configurar nova senha';
     Mail.message = content;

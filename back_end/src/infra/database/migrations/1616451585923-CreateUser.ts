@@ -57,6 +57,11 @@ export default class CreateUser1616451585923 implements MigrationInterface {
                     type: 'varchar'
                 },
                 {
+                    name: 'pending',
+                    type: 'boolean',
+                    default: true
+                },
+                {
                     name: 'created_at',
                     type: 'timestamp',
                     default: 'now()'

@@ -40,6 +40,9 @@ export default class User {
     @Column()
     g_id: string;
 
+    @Column()
+    pending: boolean;
+
     @CreateDateColumn()
     created_at: Date;
 

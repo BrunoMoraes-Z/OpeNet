@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import User from "../../../infra/entity/User";
+import AcceptPendingService from "../services/AcceptPendingService";
 import AvailableUserNameService from "../services/AvailableUserNameService";
 import CreateUserService from "../services/CreateUserService";
 import FindUserService from "../services/FindUserService";
+import PendingUserService from "../services/PendingUserService";
 import RecoverPasswordService from "../services/RecoverPasswordService";
+import RejectPendingService from "../services/RejectPendingService";
 
 export default class UserController {
 
@@ -54,6 +57,52 @@ export default class UserController {
 
     return response.json({
       message: 'Se o E-Mail informado estiver cadastrado será enviado uma mensagem para recuperação.'
+    });
+  }
+
+  public async listPending(request: Request, response: Response): Promise<Response> {
+    const repository = getRepository(User);
+    const users = await repository.find({ where: { pending: true } });
+    console.log(users.length);
+    if (users != null && users.length > 0) {
+      const result = await new PendingUserService().execute(users);
+      return response.json(result);
+    }
+
+    return response.json({
+      message: 'Nenhum cadastro pendente encontrado.'
+    });
+  }
+
+  public async acceptPending(request: Request, response: Response): Promise<Response> {
+    const { user_id } = request.body;
+
+    const repository = getRepository(User);
+    const user = await repository.findOne({ where: { user_id, pending: true } });
+    if (user) {
+      const result = await new AcceptPendingService().execute(user);
+
+      return response.status(result ? 200 : 400).json(result ? { message: 'Cadastro aprovado com sucesso.' } : { error: 'Ouve um erro ao tentar aprovar este cadastro.' });
+    }
+
+    return response.json({
+      message: 'Nenhum cadastro pendente encontrado.'
+    });
+  }
+
+  public async rejectPending(request: Request, response: Response): Promise<Response> {
+    const { user_id } = request.body;
+
+    const repository = getRepository(User);
+    const user = await repository.findOne({ where: { user_id, pending: true } });
+    if (user) {
+      const result = await new RejectPendingService().execute(user);
+
+      return response.status(result ? 200 : 400).json(result ? { message: 'Cadastro rejeitado com sucesso.' } : { error: 'Ouve um erro ao tentar rejeitar este cadastro.' });
+    }
+
+    return response.json({
+      message: 'Nenhum cadastro pendente encontrado.'
     });
   }
 

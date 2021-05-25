@@ -39,7 +39,8 @@ export default class CreateUserService {
       ano_curso,
       dt_nascimento: dt_nasc,
       password: hashed,
-      g_id
+      g_id,
+      pending: true
     });
 
     await repository.save(user);
