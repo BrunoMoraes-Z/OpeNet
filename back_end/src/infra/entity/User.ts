@@ -43,6 +43,9 @@ export default class User {
     @Column()
     pending: boolean;
 
+    @Column()
+    admin: boolean;
+
     @CreateDateColumn()
     created_at: Date;
 

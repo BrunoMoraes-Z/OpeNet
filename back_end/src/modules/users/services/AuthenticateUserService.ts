@@ -16,10 +16,16 @@ export default class AuthenticateUserService {
   public async execute({ email, password }: Request): Promise<{ user: User, token: string }> {
     const repository = getRepository(User);
 
-    const user = await repository.createQueryBuilder().where({ email }).orWhere('"user_name" = :user_name', { user_name: email }).getOne();
+    const user = await repository.createQueryBuilder().where({ email })
+    .orWhere('"user_name" = :user_name', { user_name: email }).getOne();
+
     // const user = await repository.findOne({ where: { email } });
     if (!user) {
       throw new AppError('Email/Senha inválidos.', 401);
+    } else {
+      if (user.pending) {
+        throw new AppError('Cadastro ainda pendente.', 404);
+      }
     }
 
     const similar = await compare(password, user.password);
@@ -40,6 +46,7 @@ export default class AuthenticateUserService {
 
     delete user.password;
     delete user.g_id;
+    delete user.pending;
 
     return { user, token };
   }
