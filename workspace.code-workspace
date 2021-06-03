@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "front_web"
+		},
+		{
+			"path": "new_front"
 		}
 	],
 	"settings": {}
