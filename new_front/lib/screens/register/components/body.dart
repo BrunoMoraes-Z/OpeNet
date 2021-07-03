@@ -100,7 +100,7 @@ class Body extends StatelessWidget {
                                       } else {
                                         print(content);
                                         MyToast.showSucess(
-                                            "Conta criado com sucesso.");
+                                            "Em processo de Aprovação");
                                         Navigator.popAndPushNamed(
                                             context, LoginScreen.routeName);
                                       }

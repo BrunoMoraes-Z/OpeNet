@@ -40,10 +40,12 @@ class Google {
           } else if (value.statusCode != 200) {
             MyToast.showError(content['message']);
           }
-          if (content['user']['admin']) {
-            GetStorage('local').write('admin', 1);
-          } else {
-            GetStorage('local').remove('admin');
+          if (value.statusCode == 200) {
+            if (content['user']['admin']) {
+              GetStorage('local').write('admin', 1);
+            } else {
+              GetStorage('local').remove('admin');
+            }
           }
           MyToast.showSucess('Login realizado com sucesso.');
           Navigator.pushNamed(context, HomeScreen.routeName);

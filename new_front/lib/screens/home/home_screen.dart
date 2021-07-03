@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:openet/components/background.dart';
 import 'package:openet/screens/home/components/option_column.dart';
 import 'package:openet/screens/home/components/person_card.dart';
@@ -10,6 +11,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var storage = GetStorage('local');
+    var user = storage.read('user');
     var controller = HomeController();
     return Scaffold(
       body: BackGround(
@@ -31,8 +34,8 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     PersonCard(
-                      name: 'Bruno Moraes',
-                      email: 'moraes.7bruno@gmail.com',
+                      name: "${user['first_name']} ${user['last_name']}",
+                      email: user['email'],
                       image: 'user.jpg',
                     ),
                     OptionColumn(

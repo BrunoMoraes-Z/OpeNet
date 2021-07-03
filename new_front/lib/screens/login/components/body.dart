@@ -91,6 +91,8 @@ class Body extends StatelessWidget {
                                         } else {
                                           GetStorage('local').remove('admin');
                                         }
+                                        GetStorage('local')
+                                            .write('user', content['user']);
                                         MyToast.showSucess(
                                             'Login realizado com sucesso.');
                                         Navigator.pushNamed(

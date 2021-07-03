@@ -38,31 +38,45 @@ class RegisterForm extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
-                child: Observer(
-                  builder: (_) {
-                    return InputTextField(
-                      hint: 'Nome',
-                      icon: LineIcons.userCircle,
-                      content: controller.aluno.name,
-                      inputAction: TextInputAction.next,
-                      onChanged: controller.aluno.setName,
-                    );
-                  },
-                ),
+                child: st.hasData('g_id')
+                    ? Observer(
+                        builder: (_) {
+                          return InputTextField(
+                            hint: 'Nome',
+                            icon: LineIcons.userCircle,
+                            content: controller.aluno.name,
+                            inputAction: TextInputAction.next,
+                            onChanged: controller.aluno.setName,
+                          );
+                        },
+                      )
+                    : InputTextField(
+                        hint: 'Nome',
+                        icon: LineIcons.userCircle,
+                        inputAction: TextInputAction.next,
+                        onChanged: controller.aluno.setName,
+                      ),
               ),
               SizedBox(width: 10),
               Flexible(
-                child: Observer(
-                  builder: (_) {
-                    return InputTextField(
-                      hint: 'Sobre Nome',
-                      icon: LineIcons.userCircle,
-                      content: controller.aluno.lastName,
-                      inputAction: TextInputAction.next,
-                      onChanged: controller.aluno.setLastName,
-                    );
-                  },
-                ),
+                child: st.hasData('g_id')
+                    ? Observer(
+                        builder: (_) {
+                          return InputTextField(
+                            hint: 'Sobre Nome',
+                            icon: LineIcons.userCircle,
+                            content: controller.aluno.lastName,
+                            inputAction: TextInputAction.next,
+                            onChanged: controller.aluno.setLastName,
+                          );
+                        },
+                      )
+                    : InputTextField(
+                        hint: 'Sobre Nome',
+                        icon: LineIcons.userCircle,
+                        inputAction: TextInputAction.next,
+                        onChanged: controller.aluno.setLastName,
+                      ),
               ),
             ],
           ),
@@ -91,15 +105,24 @@ class RegisterForm extends StatelessWidget {
             ],
           ),
           SizedBox(width: 5),
-          Observer(builder: (_) {
-            return InputTextField(
-              hint: 'Email',
-              icon: LineIcons.mailBulk,
-              content: controller.aluno.email,
-              inputAction: TextInputAction.next,
-              onChanged: controller.aluno.setEmail,
-            );
-          }),
+          st.hasData('g_id')
+              ? Observer(
+                  builder: (_) {
+                    return InputTextField(
+                      hint: 'Email',
+                      icon: LineIcons.mailBulk,
+                      content: controller.aluno.email,
+                      inputAction: TextInputAction.next,
+                      onChanged: controller.aluno.setEmail,
+                    );
+                  },
+                )
+              : InputTextField(
+                  hint: 'Email',
+                  icon: LineIcons.mailBulk,
+                  inputAction: TextInputAction.next,
+                  onChanged: controller.aluno.setEmail,
+                ),
           SizedBox(width: 5),
           Row(
             children: [
